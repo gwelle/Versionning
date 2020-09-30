@@ -1,37 +1,47 @@
-version: '2'
+version: '3.7'
+
 services:
-  mariadb:
-    image: 'docker.io/bitnami/mariadb:10.3-debian-10'
-    restart: always
-    environment:
-      - ALLOW_EMPTY_PASSWORD=yes
+  web:
+    build: site
+    container_name: apache_container
+    ports:
+      - '80:80'
+    volumes:
+      - ./www:/var/www/html
+      - ./server/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./server/apache2.conf:/etc/apache2/apache2.conf
+      - ./server/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
     volumes:
       - "./db_data/db:/var/lib/mysql"
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: tradecoin
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rootpw
+    restart: always
     networks:
-      - backend
+      - mysql
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    ports:
-      - '8081:80'
-    environment:
-      - PMA_HOST=mariadb
+    container_name: dev_pma
     networks:
-      - backend
-
-  myapp:
-    tty: true # Enables debugging capabilities when attached to this container.
-    image: docker.io/bitnami/rails:6-debian-10
+      - mysql
     environment:
-      - DATABASE_HOST=mariadb
-      - DATABASE_NAME=my_app_development
-    networks:
-      - backend
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
     ports:
-      - 3000:3000
-    volumes:
-      - .:/app
+      - 8183:80
 
 networks:
-  backend:
+  mysql:
     driver: bridge
