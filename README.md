@@ -11,4 +11,6 @@ Se rendre dans le dossier tp-git une fois cloner, puis lancer les commandes:
 
     docker-compose up -d
 
-    npm install
+Se rendre ensuite sur le lien: localhost ou 127.0.0.1
+
+enjoy :) 
