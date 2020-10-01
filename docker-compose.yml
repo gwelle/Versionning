@@ -1,0 +1,47 @@
+version: '3.7'
+
+services:
+  web:
+    build: site
+    container_name: apache_container
+    ports:
+      - '80:80'
+    volumes:
+      - ./www:/var/www/html
+      - ./server/000-default.conf:/etc/apache2/sites-available/000-default.conf
+      - ./server/apache2.conf:/etc/apache2/apache2.conf
+      - ./server/php.ini:/usr/local/etc/php/php.ini
+    networks:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+      - "./db_data/db:/var/lib/mysql"
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpw
+      MYSQL_DATABASE: tradecoin
+      MYSQL_USER: root
+      MYSQL_PASSWORD: rootpw
+    restart: always
+    networks:
+      - mysql
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: dev_pma
+    networks:
+      - mysql
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+    ports:
+      - 8183:80
+
+networks:
+  mysql:
+    driver: bridge
