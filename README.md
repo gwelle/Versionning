@@ -1,10 +1,10 @@
-# Ruby
+# PHP APACHE
 
-## Instalation de l'application
+## Installation de l'application
 
 ### clone du repo : 
 
->git clone https://gitlab.com/esgi-3iw/tradecoin_v2.0/
+>git clone https://gitlab.com/esgi-4iw1/tp-git/
 
 
 Se rendre dans le dossier tp-git une fois cloner, puis lancer les commandes:  
